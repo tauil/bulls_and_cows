@@ -36,7 +36,7 @@ def running
       # second try, repeat first two letters
       letters = @guess.scan(ONLY_LETTERS)[0..1]
       @guess = generate_guess(letters)
-    else if @attempt == 3
+    elsif @attempt == 3
       # third try, repeat last two letters from the first attempt
       letters = @attempts[0][:guess].scan(ONLY_LETTERS).reverse[0..1]
       @guess = generate_guess(letters)
