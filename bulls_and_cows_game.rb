@@ -31,17 +31,76 @@ def generate_guess(letters = nil)
 end
 
 def find_by_syllable(string_guess)
-  @words_starts_same = @dictionary.select{|word| word.match(/^#{string_guess[0..1]}/)}
-  @words_starts_same = @dictionary.select{|word| word.match(/#{string_guess[2..3]}$/)} if @words_starts_same.empty?
+  @first_syllable = true
+  @words_to_test = @dictionary.select{|word| word.match(/^#{string_guess[0..1]}/)}
+
+  if @words_to_test.empty?
+    @first_syllable = false
+    @words_to_test = @dictionary.select{|word| word.match(/#{string_guess[2..3]}$/)}
+  end
 end
 
 def find_by_first_letters(string_guess)
-  @words_starts_same = @dictionary.select{|word| word.match(/^#{string_guess[0]}/)}
-  @words_starts_same = @dictionary.select{|word| word.match(/^.#{string_guess[1]}/)} if @words_starts_same.empty?
+  @first_letter = true
+  @words_to_test = @dictionary.select{|word| word.match(/^#{string_guess[0]}/)}
+
+  if @words_to_test.empty?
+    @first_letter = false
+    @words_to_test = @dictionary.select{|word| word.match(/^.#{string_guess[1]}/)}
+  end
+end
+
+def find_by_last_letters(string_guess)
+  @last_letter = false
+  @words_to_test = @dictionary.select{|word| word.match(/#{string_guess[2]}.$/)}
+
+  if @words_to_test.empty?
+    @last_letter = true
+    @words_to_test = @dictionary.select{|word| word.match(/#{string_guess[3]}$/)}
+  end
+end
+
+def delete_all_words_with_letters(letters)
+  binding.pry
+  words_to_delete = @dictionary.select{|word| word.match(/[#{letters}]/)}
+  words_to_delete.map do |word|
+    @dictionary.delete(word)
+  end
+  puts "WORDS to delete: #{words_to_delete}"
+end
+
+def find_words
+  puts "find_words"
+  if @first_syllable
+    if @cows == 2 && @prev_cows == 2
+      # First two letters are right but in wrong positions
+      @words_to_test = @dictionary.select{|word| word.match(/^#{@guess[0..1].reverse}/)}
+    elsif @cows == 1 && @bulls == 1
+    end
+  else
+    if @cows == 2 && @prev_cows == 2
+      @words_to_test = @dictionary.select{|word| word.match(/#{@guess[2..3].reverse}$/)}
+    end
+  end
+
+  if @words_to_test.nil? || @words_to_test.empty?
+    find_by_syllable(@best_guess) if @first_syllable.nil?
+
+    # if @first_syllable && @bulls == 2
+    #   find_by_first_letters(@best_guess) if @first_letter.nil?
+    # else
+    #   find_by_last_letters(@best_guess) if @last_letter.nil?
+    # end
+  end
+
+  @guess = @words_to_test.first
+  @words_to_test.delete(@guess)
+
+  puts "\nNext words to try: #{@words_to_test}\n"
 end
 
 def running
-  if @guess.nil? || (@bulls == 0 && @cows == 0)
+  if @guess.nil?
     # first try: get random word from dictionary
     @guess = @dictionary[rand(@dictionary.size)]
   else
@@ -51,46 +110,57 @@ def running
 
     puts "Best guess at the moment: #{@best_guess}" if @best_guess
 
-    if (@bulls == @prev_bulls.to_i) && @starting_letters
-      puts "\nFirst two letters are good match. Find which is the right\n"
-      @words_starts_same = @dictionary.select{|word| word.match(/^#{@best_guess[0]}/)}
-      @guess = @words_starts_same.first
-      @words_starts_same.delete(@guess)
-    else
+    score = [@bulls, @cows]
 
-      if @words_starts_same.nil?
-        @starting_letters = true
-        puts "Getting words that starts with #{@best_guess[0..1]}"
-        @words_starts_same = @dictionary.select{|word| word.match(/^#{@best_guess[0..1]}/)}
-
-        if @words_starts_same.empty?
-          @starting_letters = false
-          @ending_letters = true
-          puts "Getting words that ends with #{@best_guess[2..3]}"
-          @words_starts_same = @dictionary.select{|word| word.match(/#{@best_guess[2..3]}$/)}
-
-          if @words_starts_same.empty?
-            @starting_letters = false
-            @ending_letters = false
-            @words_starts_same = [@dictionary[rand(@dictionary.size)]]
-          end
+    case score
+    when [0, 0]
+      delete_all_words_with_letters(@guess)
+      @words_to_test = [@dictionary[rand(@dictionary.size)]]
+    when [0, 1]
+    when [0, 2]
+      if @prev_cows == 2
+        if @first_syllable
+          @words_to_test = @dictionary.select{|word| word.match(/^#{@guess[0..1].reverse}/)}
+        else
+          @words_to_test = @dictionary.select{|word| word.match(/#{@guess[2..3].reverse}$/)}
         end
-
-        @guess = @words_starts_same.first
-      else
-        if @words_starts_same.empty?
-          puts "Getting words that ends with #{@best_guess[2..3]}"
-          @words_starts_same = @dictionary.select{|word| word.match(/#{@best_guess[2..3]}$/)}
-        end
-
-        @guess = @words_starts_same.first
-        @words_starts_same.delete(@guess)
       end
+    when [0, 3]
+    when [0, 4]
+      permutation_words = @guess.scan(/[a-z]/).permutation.map &:join
+      @words_to_test = @distionary.select{|w| permutation_words.include?(w) }
+    when [1, 0]
+    when [1, 1]
+    when [1, 2]
+    when [1, 3]
+    when [2, 0]
+      if @first_syllable
+        puts "Keep using current set of words. One of them is the one. Current set: #{@words_to_test}"
+      else
 
+      end
+    when [2, 1]
+    when [2, 2]
+    when [3, 0]
+    when [3, 1]
+    when [4, 0]
+      puts "Found"
+    else
+      puts "Found a bug"
+      return false
     end
 
-    puts "\nNext words to try: #{@words_starts_same}\n"
+    binding.pry
+
+    if @words_to_test.nil? || @words_to_test.empty?
+      find_by_syllable(@guess) if @first_syllable.nil?
+    else
+      @guess = @words_to_test.first
+      @words_to_test.delete(@guess)
+    end
   end
+
+  puts "#{@words_to_test}"
 
   if @guess == SECRET_WORD
     puts "Secret word is: #{@guess}"
