@@ -5,8 +5,3 @@ describe 'Bulls and Cows Game' do
     
   end
 end
-
-
-1234
-
-1256
