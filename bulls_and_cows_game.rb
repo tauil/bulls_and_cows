@@ -2,7 +2,7 @@
 # Author: Rafael Borgonovi Tauil
 
 require 'pry-byebug'
-require_relative 'game_core'
+require_relative 'lib/game_core'
 
 def running
   puts @game.status
