@@ -4,6 +4,12 @@ describe 'Bulls and Cows Game' do
   let!(:secret_word) { 'word' }
   let!(:game) { Game.new(secret_word) }
 
+  describe 'includes' do
+    it 'Guesser' do
+      expect(game).to be_a_kind_of(Guesser)
+    end
+  end
+
   describe '.initialize' do
     it 'sets dictionary' do
       expect(game.dictionary).to match(DICTIONARY)
@@ -39,6 +45,27 @@ describe 'Bulls and Cows Game' do
 
     it 'displays current secret and current guess in a nicer way' do
       expect(game.status).to eq(" ---------------------------------- \n   Current secret: word\n    Current guess: tesy\n ---------------------------------- ")
+    end
+  end
+
+  describe '#guess_new_word' do
+    context 'given bulls and cows answers' do
+      subject do
+        game.guess = 'lost'
+        game.bulls = 1
+        game.cows = 0
+        game.guess_new_word
+      end
+
+      it 'changes the guess word' do
+        subject
+        expect(game.guess).to_not eq('lost')
+      end
+
+      it 'sets guessed_words' do
+        subject
+        expect(game.guessed_words).to_not be_nil
+      end
     end
   end
 end

@@ -13,6 +13,8 @@ def running
   puts "How many Cows?"
   @game.cows = gets.chomp.to_i
 
+  @game.guess_new_word
+
   @game.running?
 end
 
