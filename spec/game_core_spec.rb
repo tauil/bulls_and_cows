@@ -1,4 +1,4 @@
-require_relative '../lib/game_core'
+require 'spec_helper'
 
 describe 'Bulls and Cows Game' do
   let!(:secret_word) { 'word' }
