@@ -5,7 +5,9 @@ require 'pry-byebug'
 require_relative 'lib/game_core'
 
 def running
-  puts @game.status
+  @game.set_guess
+
+  puts @game.show_guess
 
   puts "How many Bulls?"
   @game.bulls = gets.chomp.to_i
@@ -13,13 +15,14 @@ def running
   puts "How many Cows?"
   @game.cows = gets.chomp.to_i
 
-  @game.guess_new_word
+  @game.update_guess
 
   @game.running?
 end
 
 puts "Enter the desired secret word:"
 secret_word = gets.chomp
+samll_dictionary = %w(life love near ring wolf fish five king over time)
 @game = Game.new(secret_word)
 
 while running

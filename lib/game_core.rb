@@ -9,32 +9,31 @@ class Game
   include Guesser
   attr_accessor :dictionary, :secret_word, :guess
 
-  def initialize(secret_word)
-    @dictionary = DICTIONARY
+  def initialize(secret_word, dictionary = nil)
+    @dictionary = dictionary || DICTIONARY
     @secret_word = secret_word
-    generate_first_guess
   end
 
   def running?
     !found_secret_word
   end
 
-  def status
-    " ---------------------------------- \n   Current secret: #{secret_word}\n    Current guess: #{guess}\n ---------------------------------- "
+  def show_guess
+    "Dictionary: #{dictionary} : #{dictionary.size} words\n ---------------------------------- \n   Current secret: #{secret_word}\n    Current guess: #{guess}\n ---------------------------------- "
   end
 
-  def guess_new_word
-    set_new_guess_word
+  def update_guess
+    set_new_guess
+  end
+
+  def set_guess
+    @guess = random_word
   end
 
   private
 
   def found_secret_word
     guess == secret_word
-  end
-
-  def generate_first_guess
-    @guess = random_word
   end
 
   def random_word

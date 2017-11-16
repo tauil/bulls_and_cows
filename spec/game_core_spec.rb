@@ -49,6 +49,35 @@ describe 'Bulls and Cows Game' do
   end
 
   describe '#guess_new_word' do
+    context 'test' do
+      let!(:secret_word) { 'five' }
+      let!(:short_dictionary) { %w(life love near ring wolf fish five king over time) }
+      let!(:game) { Game.new(secret_word, short_dictionary) }
+
+      subject do
+        game.guess = 'live' #o overwriting first random guess
+        game.bulls = 2
+        game.cows = 0
+        game.guess_new_word
+      end
+
+      it 'changes the guess word' do
+        subject
+        expect(game.guess).to_not eq('live')
+      end
+
+      it 'guessed_words should not contains current guess' do
+        subject
+        expect(game.guessed_words).to_not include('wolf')
+      end
+
+      it 'sets guessed_words' do
+        subject
+        expect(game.guessed_words).to eq(["long", "lost", "lord", "loaf"])
+      end
+    end
+
+
     context 'given bulls and cows answers' do
       subject do
         game.guess = 'lost'
@@ -69,7 +98,6 @@ describe 'Bulls and Cows Game' do
     end
 
     context 'when guessed word is 0 bulls and 0 cows' do
-      let!(:game) { Game.new(secret_word) }
       let!(:words_to_be_deleted) { game.dictionary.select do |word|
                                      word.match(/^(?=.*l)(?=.*i)(?=.*v)(?=.*e).*$/)
                                    end }
@@ -81,6 +109,11 @@ describe 'Bulls and Cows Game' do
         game.guess_new_word
       end
 
+      it 'changes the guess word' do
+        subject
+        expect(game.guess).to_not eq('live')
+      end
+
       it 'removes all words with the same letters from dictionary' do
         words_to_be_deleted.each do |word|
           expect(game.dictionary).to include(word)
@@ -89,6 +122,68 @@ describe 'Bulls and Cows Game' do
         words_to_be_deleted.each do |word|
           expect(game.dictionary).to_not include(word)
         end
+      end
+    end
+
+    context 'when guessed word is 1 bulls and 0 cows' do
+      subject do
+        game.guess = 'lost'
+        game.bulls = 1
+        game.cows = 0
+        game.guess_new_word
+      end
+
+      it 'changes the guess word' do
+        subject
+        expect(game.guess).to_not eq('lost')
+      end
+
+      it 'new guess word starts with previous first two letters' do
+        subject
+        expect(game.guess.match(/^lo/)).to be_truthy
+      end
+
+      it 'sets guessed_words' do
+        subject
+        expect(game.guessed_words).to eq(["long", "lost", "lord", "loaf"])
+      end
+    end
+
+    context 'when first guessed word is 2 bulls and 0 cows' do
+      subject do
+        game.guess = 'wolf'
+        game.bulls = 2
+        game.cows = 0
+        game.guess_new_word
+      end
+
+      it 'sets guessed_words' do
+        subject
+        expect(game.guessed_words.size).to eq(28)
+      end
+
+      it 'guessed_words should not contains current guess' do
+        subject
+        expect(game.guessed_words).to_not include('wolf')
+      end
+    end
+
+    context 'when guessed word is 3 bulls and 0 cows' do
+      subject do
+        game.guess = 'work'
+        game.bulls = 3
+        game.cows = 0
+        game.guess_new_word
+      end
+
+      it 'new guess word starts with previous first two letters' do
+        subject
+        expect(game.guess.match(/^wo/)).to be_truthy
+      end
+
+      it 'sets guessed_words' do
+        subject
+        expect(game.guessed_words).to eq(["word", "grow", "worm", "rock", "york"])
       end
     end
   end

@@ -1,47 +1,54 @@
 module Guesser
-  attr_accessor :guessed_words, :bulls, :cows
+  attr_accessor :bulls, :cows, :attempts, :attempt_index
 
-  def set_new_guess_word
+  def set_new_guess
+    @attempts ||= []
+    @attempt_index ||= 1
+
     case score
     when [0, 0]
       delete_all_words_with_letters
-      @guessed_words = random_word
     when [0, 1]
+      default_update_dictionary
     when [0, 2]
-      if @prev_cows == 2
-        if @first_syllable
-          @guessed_words = dictionary.select{|word| word.match(/^#{guess[0..1].reverse}/)}
-        else
-          @guessed_words = dictionary.select{|word| word.match(/#{guess[2..3].reverse}$/)}
-        end
-      end
+      default_update_dictionary
     when [0, 3]
+      default_update_dictionary
     when [0, 4]
+      binding.pry
       permutation_words = guess.scan(/[a-z]/).permutation.map &:join
-      @guessed_words = dictionary.select{|w| permutation_words.include?(w) }
+      @dictionary = dictionary.select{|w| permutation_words.include?(w) }
     when [1, 0]
-      find_by_syllable if (guessed_words.nil? || guessed_words.empty?) && @first_syllable.nil?
-      @guess = guessed_words.first
-      guessed_words.delete(guess)
+      default_update_dictionary
     when [1, 1]
+      default_update_dictionary
     when [1, 2]
+      default_update_dictionary
     when [1, 3]
+      default_update_dictionary
     when [2, 0]
-      if @first_syllable
-        puts "Keep using current set of words. One of them is the one. Current set: #{guessed_words}"
-      else
-
-      end
+      letter_combination_1 = guess[0..1]
+      letter_combination_2 = guess[1..2]
+      letter_combination_3 = guess[2..3]
+      @dictionary = filter_dictionary_by_letters(letter_combination_1) + filter_dictionary_by_letters(letter_combination_2) + filter_dictionary_by_letters(letter_combination_3)
     when [2, 1]
+      default_update_dictionary
     when [2, 2]
     when [3, 0]
+      first_three_letters = guess[0..2]
+      last_three_letters = guess[1..3]
+      @dictionary = filter_dictionary_by_letters(first_three_letters) + filter_dictionary_by_letters(last_three_letters)
     when [3, 1]
+      default_update_dictionary
     when [4, 0]
       puts "Found"
     else
       puts "Found a bug"
       return false
     end
+
+    attempts.push({bulls: bulls, cows: cows, guess: guess})
+    @attempt_index += 1
   end
 
   private
@@ -50,23 +57,18 @@ module Guesser
     [bulls, cows]
   end
 
+  def filter_dictionary_by_letters(letters)
+    regex = letters.scan(ONLY_LETTERS).map{|letter| "(?=.*#{letter})"}.join
+    dictionary.select { |word| word.match(/^#{regex}.*$/) }
+  end
+
   def delete_all_words_with_letters
-    regex = guess.scan(ONLY_LETTERS).map{|l| "(?=.*#{l})"}.join
-    words_to_delete = dictionary.select do |word|
-      word.match(/^#{regex}.*$/)
-    end
-    words_to_delete.map do |word|
+    filter_dictionary_by_letters(guess).map do |word|
       dictionary.delete(word)
     end
   end
 
-  def find_by_syllable
-    @first_syllable = true
-    @guessed_words = dictionary.select{|word| word.match(/^#{guess[0..1]}/)}
-
-    if guessed_words.empty?
-      @first_syllable = false
-      @guessed_words = dictionary.select{|word| word.match(/#{guess[2..3]}$/)}
-    end
+  def default_update_dictionary
+    @dictionary = dictionary.select{|w| w.match(/[#{guess}]/) && w != guess}
   end
 end
