@@ -58,7 +58,6 @@ module Guesser
     words_to_delete.map do |word|
       dictionary.delete(word)
     end
-    puts "WORDS to delete: #{words_to_delete}"
   end
 
   def find_by_syllable
