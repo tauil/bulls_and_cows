@@ -16,10 +16,7 @@ class Game
   end
 
   def status
-    puts " ---------------------------------- "
-    puts "   Current secret: #{secret_word}"
-    puts "    Current guess: #{guess}"
-    puts " ---------------------------------- "
+    " ---------------------------------- \n   Current secret: #{secret_word}\n    Current guess: #{guess}\n ---------------------------------- "
   end
 
   private
