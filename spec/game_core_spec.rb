@@ -67,5 +67,29 @@ describe 'Bulls and Cows Game' do
         expect(game.guessed_words).to_not be_nil
       end
     end
+
+    context 'when guessed word is 0 bulls and 0 cows' do
+      let!(:game) { Game.new(secret_word) }
+      let!(:words_to_be_deleted) { game.dictionary.select do |word|
+                                     word.match(/^(?=.*l)(?=.*i)(?=.*v)(?=.*e).*$/)
+                                   end }
+
+      subject do
+        game.guess = 'live'
+        game.bulls = 0
+        game.cows = 0
+        game.guess_new_word
+      end
+
+      it 'removes all words with the same letters from dictionary' do
+        words_to_be_deleted.each do |word|
+          expect(game.dictionary).to include(word)
+        end
+        subject
+        words_to_be_deleted.each do |word|
+          expect(game.dictionary).to_not include(word)
+        end
+      end
+    end
   end
 end

@@ -51,7 +51,10 @@ module Guesser
   end
 
   def delete_all_words_with_letters
-    words_to_delete = dictionary.select{|word| word.match(/[#{guess}]/)}
+    regex = guess.scan(ONLY_LETTERS).map{|l| "(?=.*#{l})"}.join
+    words_to_delete = dictionary.select do |word|
+      word.match(/^#{regex}.*$/)
+    end
     words_to_delete.map do |word|
       dictionary.delete(word)
     end
