@@ -13,3 +13,15 @@ My idea was to try to reduce the possible words scope after each bull and cows r
 Basically I'm searching the words using regex and I am sure that the regex could be improved and dry some code.
 
 If you run the game you will notice that I show the scopes and all usefull information after each round.
+
+## How to run the game
+
+```
+cd bulls_and_cows && ruby bulls_and_cows_game.rb
+```
+
+## How to run the tests
+
+```
+cd bulls_and_cows && rspec
+```
