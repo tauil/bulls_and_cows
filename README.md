@@ -1,5 +1,7 @@
 # Bulls & Cows Game solver
 
+This is a command line ruby game.
+
 This idea was to write a solver solution for the Bulls & Cows game where the user just pick the secret word and tell the computer how many bulls and cows the word has.
 
 ## Solution
