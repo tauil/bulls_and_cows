@@ -30,14 +30,14 @@ module Guesser
       letter_combination_1 = guess[0..1]
       letter_combination_2 = guess[1..2]
       letter_combination_3 = guess[2..3]
-      @dictionary = filter_dictionary_by_letters(letter_combination_1) + filter_dictionary_by_letters(letter_combination_2) + filter_dictionary_by_letters(letter_combination_3)
+      @dictionary = filter_dictionary_by_letters(letter_combination_1) + filter_dictionary_by_letters(letter_combination_2) + filter_dictionary_by_letters(letter_combination_3) - [guess]
     when [2, 1]
       default_update_dictionary
     when [2, 2]
     when [3, 0]
       first_three_letters = guess[0..2]
       last_three_letters = guess[1..3]
-      @dictionary = filter_dictionary_by_letters(first_three_letters) + filter_dictionary_by_letters(last_three_letters)
+      @dictionary = filter_dictionary_by_letters(first_three_letters) + filter_dictionary_by_letters(last_three_letters) - [guess]
     when [3, 1]
       default_update_dictionary
     when [4, 0]
