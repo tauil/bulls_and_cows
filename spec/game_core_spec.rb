@@ -51,6 +51,7 @@ describe 'Bulls and Cows Game' do
         game.bulls = 1
         game.cows = 0
         game.update_guess
+        game.set_guess
       end
 
       it 'changes the guess word' do
@@ -58,9 +59,10 @@ describe 'Bulls and Cows Game' do
         expect(game.guess).to_not eq('lost')
       end
 
-      it 'sets guessed_words' do
+      it 'reduce the dictionary scope' do
+        expect(game.dictionary.size).to eq(213)
         subject
-        expect(game.guessed_words).to_not be_nil
+        expect(game.dictionary.size).to eq(143)
       end
     end
 
@@ -74,6 +76,7 @@ describe 'Bulls and Cows Game' do
         game.bulls = 0
         game.cows = 0
         game.update_guess
+        game.set_guess
       end
 
       it 'changes the guess word' do
@@ -92,46 +95,29 @@ describe 'Bulls and Cows Game' do
       end
     end
 
-    context 'when guessed word is 1 bulls and 0 cows' do
-      subject do
-        game.guess = 'lost'
-        game.bulls = 1
-        game.cows = 0
-        game.update_guess
-      end
-
-      it 'changes the guess word' do
-        subject
-        expect(game.guess).to_not eq('lost')
-      end
-
-      it 'new guess word starts with previous first two letters' do
-        subject
-        expect(game.guess.match(/^lo/)).to be_truthy
-      end
-
-      it 'sets guessed_words' do
-        subject
-        expect(game.guessed_words).to eq(["long", "lost", "lord", "loaf"])
-      end
-    end
-
     context 'when first guessed word is 2 bulls and 0 cows' do
       subject do
         game.guess = 'wolf'
         game.bulls = 2
         game.cows = 0
         game.update_guess
+        game.set_guess
       end
 
-      it 'sets guessed_words' do
+      it 'changes the guess word' do
         subject
-        expect(game.guessed_words.size).to eq(28)
+        expect(game.guess).to_not eq('wolf')
+      end
+
+      it 'reduce the dictionary scope' do
+        expect(game.dictionary.size).to eq(210)
+        subject
+        expect(game.dictionary.size).to eq(28)
       end
 
       it 'guessed_words should not contains current guess' do
         subject
-        expect(game.guessed_words).to_not include('wolf')
+        expect(game.dictionary).to_not include('wolf')
       end
     end
 
@@ -141,16 +127,23 @@ describe 'Bulls and Cows Game' do
         game.bulls = 3
         game.cows = 0
         game.update_guess
+        game.set_guess
       end
 
-      it 'new guess word starts with previous first two letters' do
+      it 'changes the guess word' do
         subject
-        expect(game.guess.match(/^wo/)).to be_truthy
+        expect(game.guess).to_not eq('work')
       end
 
-      it 'sets guessed_words' do
+      it 'reduce the dictionary scope' do
+        expect(game.dictionary.size).to eq(210)
         subject
-        expect(game.guessed_words).to eq(["word", "grow", "worm", "rock", "york"])
+        expect(game.dictionary.size).to eq(5)
+      end
+
+      it 'guessed_words should not contains current guess' do
+        subject
+        expect(game.dictionary).to_not include('work')
       end
     end
   end
