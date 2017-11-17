@@ -22,7 +22,7 @@ end
 
 puts "Enter the desired secret word:"
 secret_word = gets.chomp
-samll_dictionary = %w(life love near ring wolf fish five king over time)
+
 @game = Game.new(secret_word)
 
 while running
