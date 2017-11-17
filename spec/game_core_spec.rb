@@ -18,10 +18,6 @@ describe 'Bulls and Cows Game' do
     it 'sets secret_word' do
       expect(game.secret_word).to eq(secret_word)
     end
-
-    it 'generates first guess' do
-      expect(game.guess).to_not be_nil
-    end
   end
 
   describe '#running?' do
@@ -40,50 +36,21 @@ describe 'Bulls and Cows Game' do
     end
   end
 
-  describe '#status' do
+  describe '#show_guess' do
     before { game.guess = 'tesy' }
 
     it 'displays current secret and current guess in a nicer way' do
-      expect(game.status).to eq(" ---------------------------------- \n   Current secret: word\n    Current guess: tesy\n ---------------------------------- ")
+      expect(game.show_guess).to eq("Dictionary: #{DICTIONARY} : #{DICTIONARY.size} words\n ---------------------------------- \n   Current secret: word\n    Current guess: tesy\n ---------------------------------- ")
     end
   end
 
-  describe '#guess_new_word' do
-    context 'test' do
-      let!(:secret_word) { 'five' }
-      let!(:short_dictionary) { %w(life love near ring wolf fish five king over time) }
-      let!(:game) { Game.new(secret_word, short_dictionary) }
-
-      subject do
-        game.guess = 'live' #o overwriting first random guess
-        game.bulls = 2
-        game.cows = 0
-        game.guess_new_word
-      end
-
-      it 'changes the guess word' do
-        subject
-        expect(game.guess).to_not eq('live')
-      end
-
-      it 'guessed_words should not contains current guess' do
-        subject
-        expect(game.guessed_words).to_not include('wolf')
-      end
-
-      it 'sets guessed_words' do
-        subject
-        expect(game.guessed_words).to eq(["long", "lost", "lord", "loaf"])
-      end
-    end
-
-
+  describe '#update_guess' do
     context 'given bulls and cows answers' do
       subject do
         game.guess = 'lost'
         game.bulls = 1
         game.cows = 0
-        game.guess_new_word
+        game.update_guess
       end
 
       it 'changes the guess word' do
@@ -106,7 +73,7 @@ describe 'Bulls and Cows Game' do
         game.guess = 'live'
         game.bulls = 0
         game.cows = 0
-        game.guess_new_word
+        game.update_guess
       end
 
       it 'changes the guess word' do
@@ -130,7 +97,7 @@ describe 'Bulls and Cows Game' do
         game.guess = 'lost'
         game.bulls = 1
         game.cows = 0
-        game.guess_new_word
+        game.update_guess
       end
 
       it 'changes the guess word' do
@@ -154,7 +121,7 @@ describe 'Bulls and Cows Game' do
         game.guess = 'wolf'
         game.bulls = 2
         game.cows = 0
-        game.guess_new_word
+        game.update_guess
       end
 
       it 'sets guessed_words' do
@@ -173,7 +140,7 @@ describe 'Bulls and Cows Game' do
         game.guess = 'work'
         game.bulls = 3
         game.cows = 0
-        game.guess_new_word
+        game.update_guess
       end
 
       it 'new guess word starts with previous first two letters' do
