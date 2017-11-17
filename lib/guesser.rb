@@ -15,7 +15,6 @@ module Guesser
     when [0, 3]
       default_update_dictionary
     when [0, 4]
-      binding.pry
       permutation_words = guess.scan(/[a-z]/).permutation.map &:join
       @dictionary = dictionary.select{|w| permutation_words.include?(w) }
     when [1, 0]
